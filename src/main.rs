@@ -1,3 +1,5 @@
+extern crate rscube;
+
 fn main() {
-    println!("Hello, world!");
+    println!("Builds?... Yep, good.");
 }
