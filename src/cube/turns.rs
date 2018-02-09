@@ -1,29 +1,22 @@
-use cube::Pos;
+use cube::cubie::Pos;
 use std::iter::FromIterator;
 
-pub trait Moveable {
-    type PosIter: Iterator<Item=Pos>;
-    type FromPos: FromIterator<Pos>;
+pub trait Turnable {
+    type Iter: Iterator<Item=Pos>;
+    type FromIter: FromIterator<Pos>;
 
-    // This should be the only thing needed...
-    fn pos(&self) -> Self::PosIter;
-    fn new_pos(&mut self, Self::FromPos);
+    fn iter_pos(&self) -> Self::Iter;
 
-    fn map_pos<F>(&mut self, f: F)
+    fn map_pos<F>(&self, f: F) -> Option<Self::FromIter>
         where F: Fn(Pos) -> Option<Pos>
     {
-        let newpos = self.pos()
+        self.iter_pos()
         .map(|p| { f(p) })
-        .collect::<Option<Self::FromPos>>();
-
-        match newpos {
-            Some(pos) => self.new_pos(pos),
-            None => {},
-        }
+        .collect::<Option<Self::FromIter>>()
     }
 
     // Face turns
-    fn u(&mut self) {
+    fn u(&self) -> Option<Self::FromIter> {
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::U),
             Pos::D => None,
@@ -34,7 +27,7 @@ pub trait Moveable {
         })
     }
 
-    fn r(&mut self) {
+    fn r(&self) -> Option<Self::FromIter> {
        self.map_pos(|p| match p {
            Pos::U => Some(Pos::B),
            Pos::D => Some(Pos::F),
@@ -44,7 +37,7 @@ pub trait Moveable {
            Pos::R => Some(Pos::R),})
     }
 
-    fn f(&mut self) {
+    fn f(&self) -> Option<Self::FromIter> {
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::R),
             Pos::D => Some(Pos::L),
@@ -55,7 +48,7 @@ pub trait Moveable {
         })
     }
 
-    fn d(&mut self) {
+    fn d(&self) -> Option<Self::FromIter> {
        self.map_pos(|p| match p {
            Pos::U => None,
            Pos::D => Some(Pos::D),
@@ -66,7 +59,7 @@ pub trait Moveable {
        })
     }
 
-    fn l(&mut self) {
+    fn l(&self) -> Option<Self::FromIter> {
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::F),
             Pos::D => Some(Pos::B),
@@ -77,7 +70,7 @@ pub trait Moveable {
         })
     }
 
-    fn b(&mut self) {
+    fn b(&self) -> Option<Self::FromIter> {
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::L),
             Pos::D => Some(Pos::R),
@@ -88,12 +81,12 @@ pub trait Moveable {
         })
     }
     // Slice turns
-    fn m(&mut self) { panic!() }
-    fn e(&mut self) { panic!() }
-    fn s(&mut self) { panic!() }
+    fn m(&self) -> Option<Self::FromIter> { unimplemented!() }
+    fn e(&self) -> Option<Self::FromIter> { unimplemented!() }
+    fn s(&self) -> Option<Self::FromIter> { unimplemented!() }
 
-    fn apply_move(&mut self, mov: Move) {
-        use self::Move::*;
+    fn apply_move(&self, mov: Turn) -> Option<Self::FromIter> {
+        use self::Turn::*;
 
         match mov {
             U => self.u(), 
@@ -109,12 +102,8 @@ pub trait Moveable {
     }
 }
 
-// Wide moves will be a combination of two,
-// prime moves will be 3turns instead of 1
-// for sake of simplicity.
-
 #[derive(Debug, Copy, Clone)]
-pub enum Move {
+pub enum Turn {
     U,
     R,
     F,

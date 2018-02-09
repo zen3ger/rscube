@@ -1,16 +1,5 @@
 pub mod cubie;
-
-use alg;
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Pos {
-    U,
-    D,
-    R,
-    L,
-    F,
-    B,
-}
+pub mod turns;
 
 #[derive(Debug)]
 pub struct Cube {
@@ -26,11 +15,3 @@ impl Cube {
         }
     }
 }
-
-//impl alg::moves::Moveable<Pos> for Cube {
-//   fn apply_move(&mut self, mov: alg::moves::Move) {
-//        for corner in self.corners.iter_mut() {
-//            corner.apply_move(mov);
-//        }
-//   } 
-//}

@@ -1,8 +1,6 @@
-use alg;
-use cube::Pos;
+use cube::cubie::{Cubie, Pos};
+use cube::turns::Turnable;
 use std::iter::{FromIterator, IntoIterator, Iterator};
-use std::boxed::Box;
-
 
 #[derive(Debug)]
 pub struct Corner {
@@ -12,15 +10,14 @@ pub struct Corner {
 
 impl Corner {
     fn new(ps: [Pos;3]) -> Self {
-        let cp = CornerPos{ pos: ps };
         Self {
-            init: cp.clone(),
-            pos: cp.clone(),
+            init: CornerPos{ pos: ps },
+            pos: CornerPos{ pos: ps },
         }
     }
 
     pub fn corners() -> [Self; 8] {
-        use cube::Pos::*;
+        use cube::cubie::Pos::*;
 
         [ Corner::new([U,L,B])
         , Corner::new([U,R,B])
@@ -33,9 +30,14 @@ impl Corner {
         ]
     }
 
-    pub fn is_solved(&self) -> bool { self.init == self.pos }
+}
 
-    pub fn is_placed(&self) -> bool {
+impl Cubie for Corner {
+    fn is_solved(&self) -> bool {
+        self.init == self.pos
+    }
+
+    fn is_placed(&self) -> bool {
         let mut placed = true;
         for p in self.pos.into_iter() {
             if !placed { break; }
@@ -47,18 +49,17 @@ impl Corner {
     }
 }
 
-//#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 struct CornerPos {
     pos: [Pos; 3],
 }
 
-struct PosIter {
-    cornerpos: CornerPos,
+struct CornerPosIter<'a> {
+    cornerpos: &'a CornerPos,
     index: usize,
 }
 
-impl Iterator for PosIter {
+impl<'a> Iterator for CornerPosIter<'a> {
     type Item = Pos;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -74,11 +75,11 @@ impl Iterator for PosIter {
 
 impl<'a> IntoIterator for &'a CornerPos {
     type Item = Pos;
-    type IntoIter = PosIter;
+    type IntoIter = CornerPosIter<'a>;
 
     fn into_iter(self) -> Self::IntoIter {
-        PosIter {
-            cornerpos: self.clone() ,
+        CornerPosIter {
+            cornerpos: self,
             index: 0,
         }
     } 
@@ -86,7 +87,7 @@ impl<'a> IntoIterator for &'a CornerPos {
 
 impl FromIterator<Pos> for CornerPos {
     fn from_iter<I: IntoIterator<Item=Pos>>(iter: I) -> Self {
-        let mut ps =[Pos::U; 3];
+        let mut ps = [Pos::U; 3];
 
         for (i,p) in iter.into_iter().enumerate() {
             match i {
@@ -95,22 +96,21 @@ impl FromIterator<Pos> for CornerPos {
                     ps[i] = p;
                     return CornerPos { pos: ps };
                 },
-                _ => {},
+                _ => break,
             }
         }
         panic!("CornerPos::from_iter() not enough item to create object!");
     }
 }
 
-impl alg::moves::Moveable for CornerPos {
-    type PosIter = PosIter;
-    type FromPos = Self;
+impl<'a> Turnable for &'a CornerPos {
+    type Iter = CornerPosIter<'a>;
+    type FromIter = CornerPos;
 
-    fn pos(&self) -> Self::PosIter { self.into_iter() }
-    fn new_pos(&mut self, pos: Self::FromPos) { self.pos = pos.pos; }
+    fn iter_pos(&self) -> Self::Iter { self.into_iter() }
 
     // Slice moves don't apply to corner cubies
-    fn m(&mut self) {}
-    fn e(&mut self) {}
-    fn s(&mut self) {}
+    fn m(&self) -> Option<Self::FromIter> { None }
+    fn e(&self) -> Option<Self::FromIter> { None }
+    fn s(&self) -> Option<Self::FromIter> { None }
 }
