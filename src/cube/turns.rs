@@ -2,17 +2,18 @@ use cube::cubie::Pos;
 use std::iter::FromIterator;
 
 pub trait Turnable {
-    type Iter: Iterator<Item=Pos>;
+    type Iter: Iterator<Item = Pos>;
     type FromIter: FromIterator<Pos>;
 
     fn iter_pos(&self) -> Self::Iter;
 
     fn map_pos<F>(&self, f: F) -> Option<Self::FromIter>
-        where F: Fn(Pos) -> Option<Pos>
+    where
+        F: Fn(Pos) -> Option<Pos>,
     {
         self.iter_pos()
-        .map(|p| { f(p) })
-        .collect::<Option<Self::FromIter>>()
+            .map(|p| f(p))
+            .collect::<Option<Self::FromIter>>()
     }
 
     // Face turns
@@ -28,13 +29,14 @@ pub trait Turnable {
     }
 
     fn r(&self) -> Option<Self::FromIter> {
-       self.map_pos(|p| match p {
-           Pos::U => Some(Pos::B),
-           Pos::D => Some(Pos::F),
-           Pos::F => Some(Pos::U),
-           Pos::L => None,
-           Pos::B => Some(Pos::D),
-           Pos::R => Some(Pos::R),})
+        self.map_pos(|p| match p {
+            Pos::U => Some(Pos::B),
+            Pos::D => Some(Pos::F),
+            Pos::F => Some(Pos::U),
+            Pos::L => None,
+            Pos::B => Some(Pos::D),
+            Pos::R => Some(Pos::R),
+        })
     }
 
     fn f(&self) -> Option<Self::FromIter> {
@@ -49,14 +51,14 @@ pub trait Turnable {
     }
 
     fn d(&self) -> Option<Self::FromIter> {
-       self.map_pos(|p| match p {
-           Pos::U => None,
-           Pos::D => Some(Pos::D),
-           Pos::F => Some(Pos::R),
-           Pos::L => Some(Pos::F),
-           Pos::B => Some(Pos::L),
-           Pos::R => Some(Pos::B),
-       })
+        self.map_pos(|p| match p {
+            Pos::U => None,
+            Pos::D => Some(Pos::D),
+            Pos::F => Some(Pos::R),
+            Pos::L => Some(Pos::F),
+            Pos::B => Some(Pos::L),
+            Pos::R => Some(Pos::B),
+        })
     }
 
     fn l(&self) -> Option<Self::FromIter> {
@@ -81,15 +83,21 @@ pub trait Turnable {
         })
     }
     // Slice turns
-    fn m(&self) -> Option<Self::FromIter> { unimplemented!() }
-    fn e(&self) -> Option<Self::FromIter> { unimplemented!() }
-    fn s(&self) -> Option<Self::FromIter> { unimplemented!() }
+    fn m(&self) -> Option<Self::FromIter> {
+        unimplemented!()
+    }
+    fn e(&self) -> Option<Self::FromIter> {
+        unimplemented!()
+    }
+    fn s(&self) -> Option<Self::FromIter> {
+        unimplemented!()
+    }
 
     fn apply_move(&self, mov: Turn) -> Option<Self::FromIter> {
         use self::Turn::*;
 
         match mov {
-            U => self.u(), 
+            U => self.u(),
             R => self.r(),
             F => self.f(),
             D => self.d(),

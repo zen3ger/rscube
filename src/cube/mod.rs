@@ -1,6 +1,8 @@
 pub mod cubie;
 pub mod turns;
 
+use std::default::Default;
+
 #[derive(Debug)]
 pub struct Cube {
     corners: [cubie::Corner; 8],
@@ -13,5 +15,11 @@ impl Cube {
             corners: cubie::Corner::corners(),
             edges: cubie::Edge::edges(),
         }
+    }
+}
+
+impl Default for Cube {
+    fn default() -> Self {
+        Self::new()
     }
 }
