@@ -1,19 +1,20 @@
 use cube::cubie::{Cubie, Pos};
 use cube::turns::Turnable;
 use std::iter::{FromIterator, IntoIterator};
+use std::ops::Deref;
 
 #[derive(Debug)]
 pub struct Corner {
     init: CornerPos,
-    pos: CornerPos,
+    pub pos: CornerPos,
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct CornerPos {
+pub struct CornerPos {
     pos: [Pos; 3],
 }
 
-struct CornerPosIter<'a> {
+pub struct CornerPosIter<'a> {
     cornerpos: &'a CornerPos,
     index: usize,
 }
@@ -59,7 +60,15 @@ impl Cubie for Corner {
     }
 }
 
-impl FromIterator<Pos> for CornerPos {
+impl Deref for Corner {
+    type Target = CornerPos;
+
+    fn deref(&self) -> &Self::Target {
+        &self.pos
+    }
+}
+
+impl FromIterator<Pos> for Option<CornerPos> {
     fn from_iter<I: IntoIterator<Item = Pos>>(iter: I) -> Self {
         let mut ps = [Pos::U; 3];
 
@@ -68,12 +77,12 @@ impl FromIterator<Pos> for CornerPos {
                 0 | 1 => ps[i] = p,
                 2 => {
                     ps[i] = p;
-                    return CornerPos { pos: ps };
+                    return Some(CornerPos { pos: ps });
                 }
                 _ => break,
             }
         }
-        panic!("CornerPos::from_iter() not enough item to create object!");
+        None
     }
 }
 
@@ -91,7 +100,7 @@ impl<'a> IntoIterator for &'a CornerPos {
 
 impl<'a> Turnable for &'a CornerPos {
     type Iter = CornerPosIter<'a>;
-    type FromIter = CornerPos;
+    type FromIter = Option<CornerPos>;
 
     fn iter_pos(&self) -> Self::Iter {
         self.into_iter()

@@ -1,47 +1,48 @@
 use cube::cubie::{Cubie, Pos};
 use cube::turns::Turnable;
 use std::iter::{FromIterator, IntoIterator};
+use std::ops::Deref;
 
 #[derive(Debug)]
 pub struct Edge {
     init: EdgePos,
-    pos: EdgePos,
+    pub pos: EdgePos,
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct EdgePos {
+pub struct EdgePos {
     pos: [Pos; 2],
 }
 
-struct EdgePosIter<'a> {
+pub struct EdgePosIter<'a> {
     edgepos: &'a EdgePos,
     index: usize,
 }
 
 impl Edge {
-    fn new(ep: [Pos; 2]) -> Edge {
+    fn new(ep: [Pos; 2]) -> Self {
         Self {
             init: EdgePos { pos: ep },
             pos: EdgePos { pos: ep },
         }
     }
 
-    pub fn edges() -> [Edge; 12] {
+    pub fn edges() -> [Self; 12] {
         use cube::cubie::Pos::*;
 
         [
-            Edge::new([U, B]),
-            Edge::new([U, R]),
-            Edge::new([U, F]),
-            Edge::new([U, L]),
-            Edge::new([D, F]),
-            Edge::new([D, R]),
-            Edge::new([D, B]),
-            Edge::new([D, L]),
-            Edge::new([L, B]),
-            Edge::new([R, B]),
-            Edge::new([R, F]),
-            Edge::new([L, F]),
+            Self::new([U, B]),
+            Self::new([U, R]),
+            Self::new([U, F]),
+            Self::new([U, L]),
+            Self::new([D, F]),
+            Self::new([D, R]),
+            Self::new([D, B]),
+            Self::new([D, L]),
+            Self::new([L, B]),
+            Self::new([R, B]),
+            Self::new([R, F]),
+            Self::new([L, F]),
         ]
     }
 }
@@ -63,7 +64,15 @@ impl Cubie for Edge {
     }
 }
 
-impl FromIterator<Pos> for EdgePos {
+impl Deref for Edge {
+    type Target = EdgePos;
+
+    fn deref(&self) -> &Self::Target {
+        &self.pos
+    }
+}
+
+impl FromIterator<Pos> for Option<EdgePos> {
     fn from_iter<I: IntoIterator<Item = Pos>>(iter: I) -> Self {
         let mut ps = [Pos::U; 2];
 
@@ -72,12 +81,12 @@ impl FromIterator<Pos> for EdgePos {
                 0 => ps[i] = p,
                 1 => {
                     ps[i] = p;
-                    return EdgePos { pos: ps };
+                    return Some(EdgePos { pos: ps });
                 }
                 _ => break,
             }
         }
-        panic!("EdgePos::from_iter() not enough item to create object!")
+        None
     }
 }
 
@@ -95,7 +104,7 @@ impl<'a> IntoIterator for &'a EdgePos {
 
 impl<'a> Turnable for &'a EdgePos {
     type Iter = EdgePosIter<'a>;
-    type FromIter = EdgePos;
+    type FromIter = Option<EdgePos>;
 
     fn iter_pos(&self) -> Self::Iter {
         self.into_iter()

@@ -11,9 +11,7 @@ pub trait Turnable {
     where
         F: Fn(Pos) -> Option<Pos>,
     {
-        self.iter_pos()
-            .map(|p| f(p))
-            .collect::<Option<Self::FromIter>>()
+        self.iter_pos().map(f).collect::<Option<Self::FromIter>>()
     }
 
     // Face turns
@@ -84,28 +82,44 @@ pub trait Turnable {
     }
     // Slice turns
     fn m(&self) -> Option<Self::FromIter> {
-        unimplemented!()
+        self.map_pos(|p| match p {
+            Pos::L | Pos::R => None,
+            Pos::U => Some(Pos::F),
+            Pos::D => Some(Pos::B),
+            Pos::F => Some(Pos::D),
+            Pos::B => Some(Pos::U),
+        })
     }
     fn e(&self) -> Option<Self::FromIter> {
-        unimplemented!()
+        self.map_pos(|p| match p {
+            Pos::U | Pos::D => None,
+            Pos::F => Some(Pos::R),
+            Pos::L => Some(Pos::F),
+            Pos::B => Some(Pos::L),
+            Pos::R => Some(Pos::B),
+        })
     }
     fn s(&self) -> Option<Self::FromIter> {
-        unimplemented!()
+        self.map_pos(|p| match p {
+            Pos::F | Pos::B => None,
+            Pos::U => Some(Pos::R),
+            Pos::D => Some(Pos::L),
+            Pos::L => Some(Pos::U),
+            Pos::R => Some(Pos::D),
+        })
     }
 
-    fn apply_move(&self, mov: Turn) -> Option<Self::FromIter> {
-        use self::Turn::*;
-
+    fn apply_turn(&self, mov: Turn) -> Option<Self::FromIter> {
         match mov {
-            U => self.u(),
-            R => self.r(),
-            F => self.f(),
-            D => self.d(),
-            L => self.l(),
-            B => self.b(),
-            M => self.m(),
-            E => self.e(),
-            S => self.s(),
+            Turn::U => self.u(),
+            Turn::R => self.r(),
+            Turn::F => self.f(),
+            Turn::D => self.d(),
+            Turn::L => self.l(),
+            Turn::B => self.b(),
+            Turn::M => self.m(),
+            Turn::E => self.e(),
+            Turn::S => self.s(),
         }
     }
 }

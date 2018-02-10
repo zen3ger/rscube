@@ -1,11 +1,12 @@
+mod center;
 mod corner;
 mod edge;
-mod center;
 
+pub use self::center::Center;
 pub use self::corner::Corner;
 pub use self::edge::Edge;
 
-trait Cubie {
+pub trait Cubie {
     fn is_placed(&self) -> bool;
     fn is_solved(&self) -> bool;
 }
