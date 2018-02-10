@@ -58,6 +58,12 @@ impl Cube {
                 println!("{:?}", edge)
             }
         }
+
+        for center in &self.centers {
+            if f(center) {
+                println!("{:?}",center);
+            }
+        }
     }
 }
 

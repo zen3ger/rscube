@@ -120,7 +120,7 @@ impl<'a> Iterator for CenterPosIter<'a> {
     type Item = Pos;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.pulled {
+        if !self.pulled {
             self.pulled = true;
             Some(self.centerpos.pos)
         } else {
