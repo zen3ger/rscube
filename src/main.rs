@@ -1,17 +1,29 @@
 extern crate rscube;
 
+use rscube::alg::parse::Parser;
 use rscube::cube::Cube;
-use rscube::cube::turns::Turn::*;
+use rscube::cube::cubie::Cubie;
+use std::io::BufRead;
 
 fn main() {
-    // For now just test it with an H-perm
-    let hperm = [M, M, U, M, M, U, U, M, M, U, M, M];
     let mut cube = Cube::new();
+    let mut parser = Parser::new();
+    let stdin = std::io::stdin();
 
-    for &t in &hperm {
-        cube.turn(t)
+    for line in stdin.lock().lines() {
+        let line = line.unwrap();
+        if line == ":q" { break }
+        if line == ":r" { cube = Cube::new(); continue }
+
+        let turns = parser.parse(&line)
+            .report()
+            .generate();
+        if turns.is_some() {
+            let turns = turns.unwrap();
+            for &t in &turns {
+                cube.turn(t);
+            }
+        }
+        cube.list_any(|x| !x.is_solved())
     }
-
-    // only the top edges should be unsolved
-    cube.list_any(|cubie| !cubie.is_solved())
 }

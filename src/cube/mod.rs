@@ -1,8 +1,8 @@
 pub mod cubie;
 pub mod turns;
 
-use std;
 use self::turns::Turnable;
+use std;
 
 #[derive(Debug)]
 pub struct Cube {

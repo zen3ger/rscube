@@ -1,5 +1,7 @@
-use std::str::FromStr;
+use alg::parse::error::{AlgParseError, AlgParseErrorKind};
 use cube::turns::Turn;
+use std::convert::Into;
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub enum MoveType {
@@ -8,7 +10,7 @@ pub enum MoveType {
     Prime(Turn),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Move {
     Normal(MoveType),
     Wide(MoveType, MoveType),
@@ -68,6 +70,16 @@ impl MoveType {
     }
 }
 
+impl Into<Vec<Turn>> for MoveType {
+    fn into(self) -> Vec<Turn> {
+        match self {
+            MoveType::Single(t) => vec![t],
+            MoveType::Double(t) => vec![t, t],
+            MoveType::Prime(t) => vec![t, t, t],
+        }
+    }
+}
+
 impl Move {
     fn wide(&mut self) {
         use self::Move::*;
@@ -96,8 +108,21 @@ impl Move {
     }
 }
 
+impl Into<Vec<Turn>> for Move {
+    fn into(self) -> Vec<Turn> {
+        match self {
+            Move::Normal(tt) => tt.into(),
+            Move::Wide(tt, ttp) => {
+                let mut ts: Vec<Turn> = tt.into();
+                ts.extend::<Vec<Turn>>(ttp.into());
+                ts
+            },
+        }
+    }
+}
+
 impl FromStr for Move {
-    type Err = &'static str;
+    type Err = AlgParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         use cube::turns::Turn::*;
@@ -105,7 +130,7 @@ impl FromStr for Move {
         use self::MoveType::*;
 
         if s.is_empty() {
-            return Err("Failed to parse `Move`: empty input!");
+            return Err(AlgParseError { kind: AlgParseErrorKind::EmptyInput });
         }
 
         let mut m = Normal(Single(U));
@@ -123,14 +148,14 @@ impl FromStr for Move {
                         'M' | 'm' => Normal(Single(M)),
                         'E' | 'e' => Normal(Single(E)),
                         'S' | 's' => Normal(Single(S)),
-                        _ => return Err("Failed to parse `Move`: unknown `MoveType` type!"),
+                        _ => return Err(AlgParseError { kind: AlgParseErrorKind::UnknownTurn }),
                     }
                 }
                 _ => match ch {
                     'W' | 'w' => m.wide(),
                     '\'' | 'i' => m.apply(MoveType::apply_prime),
                     '2' => m.apply(MoveType::apply_double),
-                    _ => return Err("Failed to parse `Move`: unknown modifier!"),
+                    _ => return Err(AlgParseError { kind: AlgParseErrorKind::UnknownModifier }),
                 },
             }
         }
