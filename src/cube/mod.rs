@@ -61,7 +61,7 @@ impl Cube {
 
         for center in &self.centers {
             if f(center) {
-                println!("{:?}",center);
+                println!("{:?}", center);
             }
         }
     }

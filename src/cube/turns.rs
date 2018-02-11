@@ -136,3 +136,18 @@ pub enum Turn {
     E,
     S,
 }
+
+impl Turn {
+    pub fn is_slice(&self) -> bool {
+        use self::Turn::*;
+
+        match *self {
+            M | E | S => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_face(&self) -> bool {
+        !self.is_slice()
+    }
+}
