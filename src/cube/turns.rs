@@ -20,7 +20,9 @@ pub trait Turnable {
 
     // Face turns
     fn u(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::U) { return None }
+        if !self.has(Pos::U) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::U),
             Pos::D => None,
@@ -32,7 +34,9 @@ pub trait Turnable {
     }
 
     fn r(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::R) { return None }
+        if !self.has(Pos::R) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::B),
             Pos::D => Some(Pos::F),
@@ -44,7 +48,9 @@ pub trait Turnable {
     }
 
     fn f(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::F) { return None }
+        if !self.has(Pos::F) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::R),
             Pos::D => Some(Pos::L),
@@ -56,7 +62,9 @@ pub trait Turnable {
     }
 
     fn d(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::D) { return None }
+        if !self.has(Pos::D) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => None,
             Pos::D => Some(Pos::D),
@@ -68,7 +76,9 @@ pub trait Turnable {
     }
 
     fn l(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::L) { return None }
+        if !self.has(Pos::L) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::F),
             Pos::D => Some(Pos::B),
@@ -80,7 +90,9 @@ pub trait Turnable {
     }
 
     fn b(&self) -> Option<Self::FromIter> {
-        if !self.has(Pos::B) { return None }
+        if !self.has(Pos::B) {
+            return None;
+        }
         self.map_pos(|p| match p {
             Pos::U => Some(Pos::L),
             Pos::D => Some(Pos::R),

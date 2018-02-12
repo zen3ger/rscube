@@ -116,7 +116,7 @@ impl Into<Vec<Turn>> for Move {
                 let mut ts: Vec<Turn> = tt.into();
                 ts.extend::<Vec<Turn>>(ttp.into());
                 ts
-            },
+            }
         }
     }
 }
@@ -130,7 +130,9 @@ impl FromStr for Move {
         use self::MoveType::*;
 
         if s.is_empty() {
-            return Err(AlgParseError { kind: AlgParseErrorKind::EmptyInput });
+            return Err(AlgParseError {
+                kind: AlgParseErrorKind::EmptyInput,
+            });
         }
 
         let mut m = Normal(Single(U));
@@ -148,14 +150,22 @@ impl FromStr for Move {
                         'M' | 'm' => Normal(Single(M)),
                         'E' | 'e' => Normal(Single(E)),
                         'S' | 's' => Normal(Single(S)),
-                        _ => return Err(AlgParseError { kind: AlgParseErrorKind::UnknownTurn }),
+                        _ => {
+                            return Err(AlgParseError {
+                                kind: AlgParseErrorKind::UnknownTurn,
+                            })
+                        }
                     }
                 }
                 _ => match ch {
                     'W' | 'w' => m.wide(),
                     '\'' | 'i' => m.apply(MoveType::apply_prime),
                     '2' => m.apply(MoveType::apply_double),
-                    _ => return Err(AlgParseError { kind: AlgParseErrorKind::UnknownModifier }),
+                    _ => {
+                        return Err(AlgParseError {
+                            kind: AlgParseErrorKind::UnknownModifier,
+                        })
+                    }
                 },
             }
         }

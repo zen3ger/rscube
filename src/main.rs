@@ -12,12 +12,15 @@ fn main() {
 
     for line in stdin.lock().lines() {
         let line = line.unwrap();
-        if line == ":q" { break }
-        if line == ":r" { cube = Cube::new(); continue }
+        if line == ":q" {
+            break;
+        }
+        if line == ":r" {
+            cube = Cube::new();
+            continue;
+        }
 
-        let turns = parser.parse(&line)
-            .report()
-            .generate();
+        let turns = parser.parse(&line).report().generate();
         if turns.is_some() {
             let turns = turns.unwrap();
             for &t in &turns {

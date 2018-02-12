@@ -32,7 +32,8 @@ impl Parser {
     pub fn parse(&mut self, input: &str) -> &Self {
         self.flush();
 
-        let res = input.split_whitespace()
+        let res = input
+            .split_whitespace()
             .map(Move::from_str)
             .collect::<Vec<_>>();
 
@@ -47,13 +48,15 @@ impl Parser {
 
         for res in self.result.iter().zip(self.input.split_whitespace()) {
             match res {
-                (&Ok(ref m),_) => {
-                    gen.push(m.clone())
-                },
+                (&Ok(ref m), _) => gen.push(m.clone()),
                 (&Err(ref e), inp) => {
                     has_err = true;
-                    println!("For input `{}` => {}", inp, e.cause().unwrap().description());
-                },
+                    println!(
+                        "For input `{}` => {}",
+                        inp,
+                        e.cause().unwrap().description()
+                    );
+                }
             }
         }
         if !has_err {
@@ -66,7 +69,9 @@ impl Parser {
 
 impl Generator {
     pub fn generate(self) -> Option<Vec<Turn>> {
-        if self.from.is_none() { return None }
+        if self.from.is_none() {
+            return None;
+        }
 
         let moves = self.from.unwrap();
         let mut turns = Vec::new();
