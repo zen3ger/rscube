@@ -2,6 +2,8 @@ pub mod cubie;
 pub mod turns;
 
 use self::turns::Turnable;
+use self::cubie::{Center, Corner, Edge};
+
 use std;
 
 #[derive(Debug)]
@@ -41,6 +43,18 @@ impl Cube {
                 center.pos = ps;
             }
         }
+    }
+
+    pub fn corners(&self) -> std::slice::Iter<Corner> {
+        self.corners.iter()
+    }
+
+    pub fn edges(&self) -> std::slice::Iter<Edge> {
+        self.edges.iter()
+    }
+
+    pub fn centers(&self) -> std::slice::Iter<Center> {
+        self.centers.iter()
     }
 
     pub fn list_any<F>(&self, f: F)

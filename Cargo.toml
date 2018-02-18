@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Roland Kovacs <zen3ger@gmail.com>"]
 
 [dependencies]
+svgdom = "0.10.4"

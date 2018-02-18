@@ -39,6 +39,10 @@ impl Center {
             Self::new(B),
         ]
     }
+
+    pub fn pos(&self) -> Pos {
+        self.pos.pos
+    }
 }
 
 impl Cubie for Center {
