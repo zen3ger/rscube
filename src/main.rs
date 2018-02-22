@@ -7,8 +7,8 @@ use rscube::render::{Dom, WriteBuffer};
 use std::io::{BufRead, Write};
 use std::fs::File;
 
-const RUBIKS_CUBE: &'static str = "gfx/rubiks_cube.svg";
-const RUBIKS_CUBE_MODIF: &'static str = "gfx/modif_rubiks_cube.svg";
+const RUBIKS_CUBE: &str = "gfx/rubiks_cube.svg";
+const RUBIKS_CUBE_MODIF: &str = "gfx/modif_rubiks_cube.svg";
 
 fn main() {
     let mut dom = Dom::load(RUBIKS_CUBE);

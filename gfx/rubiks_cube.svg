@@ -1,6 +1,21 @@
-<svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg86"
+   sodipodi:docname="rubiks_cube.svg"
+   width="349.25"
+   height="261.9375"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <g
-      id="FACES">
+     id="FACES"
+     transform="translate(74.083338,-54.906251)">
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.64583325;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="FACE-U"
@@ -45,7 +60,8 @@
        y="146.1875" />
   </g>
   <g
-     id="CORNERS">
+     id="CORNERS"
+     transform="translate(74.083338,-54.906251)">
     <g
        id="ULB">
       <rect
@@ -288,7 +304,8 @@
     </g>
   </g>
   <g
-     id="EDGES">
+     id="EDGES"
+     transform="translate(74.083338,-54.906251)">
     <g
        id="UB">
       <rect
@@ -543,7 +560,8 @@
     </g>
   </g>
   <g
-     id="CENTERS">
+     id="CENTERS"
+     transform="translate(74.083338,-54.906251)">
     <rect
        ry="2.6458333"
        rx="2.6458333"

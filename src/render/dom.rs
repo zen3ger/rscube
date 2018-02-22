@@ -28,12 +28,7 @@ impl Dom {
     }
 
     pub fn update(&mut self, cube: &Cube) {
-        let root = self.doc.first_child();
-        if root.is_none() {
-            return;
-        }
-
-        let root = root.unwrap();
+        let root = self.doc.svg_element().unwrap();
         for child in root.children() {
             let id = child.id().clone();
             match id.as_ref() {

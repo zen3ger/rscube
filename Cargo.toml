@@ -5,3 +5,4 @@ authors = ["Roland Kovacs <zen3ger@gmail.com>"]
 
 [dependencies]
 svgdom = "0.10.4"
+resvg = "*"
