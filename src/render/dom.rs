@@ -1,76 +1,74 @@
-use render::{svgdom, ColorScheme};
+use resvg::{self, tree};
+use std::default;
+
 use cube::Cube;
 use cube::cubie::Pos;
 
-use std::fs::File;
-use std::io::Read;
-use std::default::Default;
-
 pub struct Dom {
-    pub doc: svgdom::Document,
+    pub rtree: resvg::tree::RenderTree,
     colors: ColorScheme,
+}
+
+pub struct ColorScheme {
+    u: tree::Color,
+    d: tree::Color,
+    r: tree::Color,
+    l: tree::Color,
+    f: tree::Color,
+    b: tree::Color,
 }
 
 impl Dom {
     pub fn load(path: &str) -> Self {
-        let mut file = File::open(path).expect("Unable to load svg");
-        let length = file.metadata().unwrap().len() as usize;
-
-        let mut inp_data = String::with_capacity(length + 1);
-        file.read_to_string(&mut inp_data).unwrap();
-
-        let doc = svgdom::Document::from_str(&inp_data).expect("Failed to create DOM");
+        let opt = resvg::Options::default();
+        let rtree = resvg::parse_rtree_from_file(path, &opt).unwrap();
 
         Dom {
-            doc: doc,
+            rtree: rtree,
             colors: ColorScheme::default(),
         }
     }
 
     pub fn update(&mut self, cube: &Cube) {
-        let root = self.doc.svg_element().unwrap();
-        for child in root.children() {
-            let id = child.id().clone();
-            match id.as_ref() {
-                "CORNERS" => for (node, corner) in child.children().zip(cube.corners()) {
-                    for (pos, mut rect) in corner.pos.into_iter().zip(node.children()) {
-                        let color = match pos {
-                            Pos::U => self.colors.u(),
-                            Pos::D => self.colors.d(),
-                            Pos::R => self.colors.r(),
-                            Pos::L => self.colors.l(),
-                            Pos::F => self.colors.f(),
-                            Pos::B => self.colors.b(),
-                        };
-                        rect.set_attribute((svgdom::AttributeId::Fill, color));
-                    }
-                },
-                "EDGES" => for (node, edge) in child.children().zip(cube.edges()) {
-                    for (pos, mut rect) in edge.pos.into_iter().zip(node.children()) {
-                        let color = match pos {
-                            Pos::U => self.colors.u(),
-                            Pos::D => self.colors.d(),
-                            Pos::R => self.colors.r(),
-                            Pos::L => self.colors.l(),
-                            Pos::F => self.colors.f(),
-                            Pos::B => self.colors.b(),
-                        };
-                        rect.set_attribute((svgdom::AttributeId::Fill, color));
-                    }
-                },
-                "CENTERS" => for (mut rect, center) in child.children().zip(cube.centers()) {
-                    let color = match center.pos() {
-                        Pos::U => self.colors.u(),
-                        Pos::D => self.colors.d(),
-                        Pos::R => self.colors.r(),
-                        Pos::L => self.colors.l(),
-                        Pos::F => self.colors.f(),
-                        Pos::B => self.colors.b(),
-                    };
-                    rect.set_attribute((svgdom::AttributeId::Fill, color));
-                },
-                _ => continue,
-            }
+        () //do nothing for now
+    }
+}
+
+impl ColorScheme {
+    pub fn u(&self) -> tree::Color {
+        self.u
+    }
+
+    pub fn d(&self) -> tree::Color {
+        self.d
+    }
+
+    pub fn r(&self) -> tree::Color {
+        self.r
+    }
+
+    pub fn l(&self) -> tree::Color {
+        self.l
+    }
+
+    pub fn f(&self) -> tree::Color {
+        self.f
+    }
+
+    pub fn b(&self) -> tree::Color {
+        self.b
+    }
+}
+
+impl default::Default for ColorScheme {
+    fn default() -> Self {
+        Self {
+            u: tree::Color::new(255, 255, 255),
+            d: tree::Color::new(255, 255, 0),
+            r: tree::Color::new(255, 0, 0),
+            l: tree::Color::new(255, 127, 0),
+            f: tree::Color::new(0, 255, 31),
+            b: tree::Color::new(0, 80, 255),
         }
     }
 }
