@@ -151,6 +151,8 @@ fn main() {
                             dom.update(&cube);
                         }
                         buf.clear();
+                        mesh.vertices.clear();
+                        mesh.indices.clear();
                         svg::tessellate(
                             &dom,
                             &mut fill_tess,
@@ -163,6 +165,8 @@ fn main() {
                         buf.clear();
                         cube = Cube::new();
                         dom.update(&cube);
+                        mesh.vertices.clear();
+                        mesh.indices.clear();
                         svg::tessellate(
                             &dom,
                             &mut fill_tess,
