@@ -11,7 +11,7 @@ pub struct Center {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct CenterPos {
-    pos: Pos,
+    pub pos: Pos,
 }
 
 pub struct CenterPosIter<'a> {
@@ -52,6 +52,12 @@ impl Cubie for Center {
 
     fn is_placed(&self) -> bool {
         self.is_solved()
+    }
+
+    fn id(&self) -> String {
+        let mut id = String::with_capacity(1);
+        id.push(self.init.pos.as_char());
+        id
     }
 }
 

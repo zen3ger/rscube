@@ -11,7 +11,7 @@ pub struct Edge {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct EdgePos {
-    pos: [Pos; 2],
+    pub pos: [Pos; 2],
 }
 
 pub struct EdgePosIter<'a> {
@@ -61,6 +61,13 @@ impl Cubie for Edge {
             placed = self.init.into_iter().any(|i| i == p);
         }
         placed
+    }
+
+    fn id(&self) -> String {
+        self.init
+            .into_iter()
+            .map(|p| p.as_char())
+            .collect::<String>()
     }
 }
 

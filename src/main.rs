@@ -96,13 +96,13 @@ fn main() {
         )
         .unwrap();
 
-    let (vbo, ibo) = factory.create_vertex_buffer_with_slice(&mesh.vertices[..], &mesh.indices[..]);
+    //let (vbo, ibo) = factory.create_vertex_buffer_with_slice(&mesh.vertices[..], &mesh.indices[..]);
 
     let mut cmd_queue: gfx::Encoder<_, _> = factory.create_command_buffer().into();
 
     let constants = factory.create_constant_buffer(1);
 
-    let mut buf = String::with_capacity(10);
+    let mut buf = String::with_capacity(5);
 
     'update: loop {
         let mut quit = false;
@@ -144,7 +144,6 @@ fn main() {
                         scene.zoom *= 1.2;
                     }
                     VirtualKeyCode::Space => {
-                        println!("{}", buf);
                         if let Some(turns) = parser.parse(&buf).report().generate() {
                             for &t in &turns {
                                 cube.turn(t);
@@ -152,6 +151,25 @@ fn main() {
                             dom.update(&cube);
                         }
                         buf.clear();
+                        svg::tessellate(
+                            &dom,
+                            &mut fill_tess,
+                            &mut stroke_tess,
+                            &mut mesh,
+                            &mut transform,
+                        );
+                    }
+                    VirtualKeyCode::Back => {
+                        buf.clear();
+                        cube = Cube::new();
+                        dom.update(&cube);
+                        svg::tessellate(
+                            &dom,
+                            &mut fill_tess,
+                            &mut stroke_tess,
+                            &mut mesh,
+                            &mut transform,
+                        );
                     }
                     VirtualKeyCode::U => buf.push('U'),
                     VirtualKeyCode::D => buf.push('D'),
@@ -159,6 +177,9 @@ fn main() {
                     VirtualKeyCode::L => buf.push('L'),
                     VirtualKeyCode::F => buf.push('F'),
                     VirtualKeyCode::B => buf.push('B'),
+                    VirtualKeyCode::M => buf.push('M'),
+                    VirtualKeyCode::E => buf.push('E'),
+                    VirtualKeyCode::S => buf.push('S'),
                     VirtualKeyCode::I => buf.push('\''),
                     VirtualKeyCode::Key2 => buf.push('2'),
                     _key => {}
@@ -167,6 +188,8 @@ fn main() {
             _ => {}
         });
 
+        let (vbo, ibo) =
+            factory.create_vertex_buffer_with_slice(&mesh.vertices[..], &mesh.indices[..]);
         if quit {
             break;
         }
@@ -192,23 +215,3 @@ fn main() {
         device.cleanup();
     }
 }
-
-// let stdin = std::io::stdin();
-// for line in stdin.lock().lines() {
-//     let line = line.unwrap();
-//     match line.as_ref() {
-//         ":q" => break,
-//         ":r" => {
-//             cube = Cube::new();
-//             continue;
-//         }
-//         _ => {
-//             if let Some(turns) = parser.parse(&line).report().generate() {
-//                 for &t in &turns {
-//                     cube.turn(t);
-//                 }
-//             }
-//         }
-//     }
-//     dom.update(&cube);
-// }

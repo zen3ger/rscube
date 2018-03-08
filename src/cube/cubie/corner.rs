@@ -11,7 +11,7 @@ pub struct Corner {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct CornerPos {
-    pos: [Pos; 3],
+    pub pos: [Pos; 3],
 }
 
 pub struct CornerPosIter<'a> {
@@ -57,6 +57,13 @@ impl Cubie for Corner {
             placed = self.init.into_iter().any(|i| i == p);
         }
         placed
+    }
+
+    fn id(&self) -> String {
+        self.init
+            .into_iter()
+            .map(|p| p.as_char())
+            .collect::<String>()
     }
 }
 
