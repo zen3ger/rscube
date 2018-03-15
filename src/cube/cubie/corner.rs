@@ -5,7 +5,7 @@ use std::ops::Deref;
 
 #[derive(Debug)]
 pub struct Corner {
-    init: CornerPos,
+    pub init: CornerPos,
     pub pos: CornerPos,
 }
 
@@ -60,10 +60,15 @@ impl Cubie for Corner {
     }
 
     fn id(&self) -> String {
-        self.init
-            .into_iter()
-            .map(|p| p.as_char())
-            .collect::<String>()
+        let mut id = ['-'; 3];
+        for p in &self.pos {
+            match p {
+                Pos::U | Pos::D => id[0] = p.as_char(),
+                Pos::R | Pos::L => id[1] = p.as_char(),
+                Pos::F | Pos::B => id[2] = p.as_char(),
+            }
+        }
+        id.into_iter().collect::<String>()
     }
 }
 

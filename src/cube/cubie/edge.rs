@@ -5,7 +5,7 @@ use std::ops::Deref;
 
 #[derive(Debug)]
 pub struct Edge {
-    init: EdgePos,
+    pub init: EdgePos,
     pub pos: EdgePos,
 }
 
@@ -64,10 +64,26 @@ impl Cubie for Edge {
     }
 
     fn id(&self) -> String {
-        self.init
-            .into_iter()
-            .map(|p| p.as_char())
-            .collect::<String>()
+        let mut id: [char; 2] = ['-'; 2];
+        for p in &self.pos {
+            match p {
+                Pos::U | Pos::D => {
+                    if id[0] != '-' {
+                        id[1] = id[0];
+                    }
+                    id[0] = p.as_char();
+                }
+                Pos::R | Pos::L => {
+                    let mut i = 1;
+                    if id[0] == '-' {
+                        i = 0;
+                    }
+                    id[i] = p.as_char();
+                }
+                Pos::F | Pos::B => id[1] = p.as_char(),
+            }
+        }
+        id.into_iter().collect::<String>()
     }
 }
 

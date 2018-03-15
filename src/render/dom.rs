@@ -43,16 +43,18 @@ impl Dom {
                         let face = split.next().unwrap();
                         for corner in &mut cube.corners() {
                             if corner.id() == piece {
-                                let i = match face.as_ref() {
-                                    "U" | "D" => 0,
-                                    "R" | "L" => 1,
-                                    "F" | "B" => 2,
-                                    _ => panic!("Wrong face identifier found in Cube SVG"),
-                                };
-                                let c = Dom::match_color(&self.colors, &corner.pos.pos[i]);
+                                let (i, _) = corner
+                                    .pos
+                                    .into_iter()
+                                    .map(|p| p.as_char())
+                                    .enumerate()
+                                    .find(|&(_, c)| Some(c) == face.chars().nth(0))
+                                    .unwrap();
+                                let c = Dom::match_color(&self.colors, &corner.init.pos[i]);
                                 if let Some(ref mut fill) = p.fill {
                                     fill.paint = tree::Paint::Color(c);
                                 }
+                                break;
                             }
                         }
                     }
@@ -64,16 +66,18 @@ impl Dom {
 
                         for edge in &mut cube.edges() {
                             if edge.id() == piece {
-                                let i = if face.chars().nth(0) == piece.chars().nth(0) {
-                                    0
-                                } else {
-                                    1
-                                };
-                                let c = Dom::match_color(&self.colors, &edge.pos.pos[i]);
+                                let (i, _) = edge.pos
+                                    .into_iter()
+                                    .map(|p| p.as_char())
+                                    .enumerate()
+                                    .find(|&(_, c)| Some(c) == face.chars().nth(0))
+                                    .unwrap();
+                                let c = Dom::match_color(&self.colors, &edge.init.pos[i]);
 
                                 if let Some(ref mut fill) = p.fill {
                                     fill.paint = tree::Paint::Color(c);
                                 }
+                                break;
                             }
                         }
                     }
@@ -81,11 +85,12 @@ impl Dom {
                         // centers F
                         for center in &mut cube.centers() {
                             if center.id() == id {
-                                let c = Dom::match_color(&self.colors, &center.pos.pos);
+                                let c = Dom::match_color(&self.colors, &center.init.pos);
 
                                 if let Some(ref mut fill) = p.fill {
                                     fill.paint = tree::Paint::Color(c);
                                 }
+                                break;
                             }
                         }
                     }

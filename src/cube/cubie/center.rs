@@ -5,7 +5,7 @@ use std::ops::Deref;
 
 #[derive(Debug)]
 pub struct Center {
-    init: CenterPos,
+    pub init: CenterPos,
     pub pos: CenterPos,
 }
 
@@ -56,7 +56,7 @@ impl Cubie for Center {
 
     fn id(&self) -> String {
         let mut id = String::with_capacity(1);
-        id.push(self.init.pos.as_char());
+        id.push(self.pos.pos.as_char());
         id
     }
 }

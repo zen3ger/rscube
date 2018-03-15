@@ -19,7 +19,7 @@ use rscube::cube::Cube;
 use rscube::render;
 use rscube::render::*;
 
-const RUBIKS_CUBE: &str = "gfx/rubiks_cube.svg";
+const RUBIKS_CUBE: &str = "assets/rubiks_cube2.svg";
 const WINDOW_SIZE: f32 = 800.0;
 
 fn main() {
