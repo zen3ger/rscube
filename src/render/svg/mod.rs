@@ -1,10 +1,9 @@
 mod path_convert;
 mod stroke_convert;
 
-use glutin::GlContext;
-use lyon::tessellation::geometry_builder::{BuffersBuilder, VertexBuffers, VertexConstructor};
+use lyon::tessellation::geometry_builder::{BuffersBuilder, VertexBuffers};
 use lyon::tessellation::{FillOptions, FillTessellator, StrokeTessellator};
-use resvg::tree::{Transform, TreeExt};
+use resvg::tree::Transform;
 use resvg;
 
 use super::*;

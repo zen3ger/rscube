@@ -10,5 +10,6 @@ gfx_device_gl = "0.14.4"
 gfx_window_glutin = "0.18.0"
 glutin = "0.10.0"
 lyon = "0.10.0"
+rand = "0.4"
 
 resvg = { git = "https://github.com/RazrFalcon/resvg.git" }

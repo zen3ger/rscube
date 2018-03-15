@@ -6,7 +6,6 @@ use gfx;
 use lyon::tessellation::geometry_builder::VertexConstructor;
 use lyon::tessellation;
 use resvg::tree::Color;
-use std::default;
 
 pub use self::dom::{ColorScheme, Dom};
 

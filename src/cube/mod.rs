@@ -4,6 +4,7 @@ pub mod turns;
 use self::turns::Turnable;
 use self::cubie::{Center, Corner, Edge};
 
+use rand;
 use std;
 
 #[derive(Debug)]
@@ -42,6 +43,18 @@ impl Cube {
             if let Some(ps) = newpos {
                 center.pos = ps;
             }
+        }
+    }
+
+    pub fn scramble(&mut self) {
+        use rand::Rng;
+        use self::turns::TURNS;
+
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..rng.gen_range(23, 46) {
+            let t = TURNS[rng.gen_range(0, 9)];
+            self.turn(t)
         }
     }
 

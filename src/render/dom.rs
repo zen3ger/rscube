@@ -1,4 +1,4 @@
-use resvg::{self, tree, NodeExt};
+use resvg::{self, tree};
 use std::default;
 
 use cube::Cube;

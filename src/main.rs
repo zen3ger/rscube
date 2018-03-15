@@ -10,9 +10,9 @@ extern crate rscube;
 use gfx::traits::{Device, FactoryExt};
 use glutin::ElementState::Pressed;
 use glutin::{Event, GlContext, VirtualKeyCode};
-use lyon::tessellation::geometry_builder::{BuffersBuilder, VertexBuffers};
-use lyon::tessellation::{FillOptions, FillTessellator, StrokeTessellator};
-use resvg::tree::TreeExt;
+use lyon::tessellation::geometry_builder::VertexBuffers;
+use lyon::tessellation::{FillTessellator, StrokeTessellator};
+use resvg::tree::{Transform, TreeExt};
 
 use rscube::alg::parse::Parser;
 use rscube::cube::Cube;
@@ -96,15 +96,11 @@ fn main() {
         )
         .unwrap();
 
-    //let (vbo, ibo) = factory.create_vertex_buffer_with_slice(&mesh.vertices[..], &mesh.indices[..]);
-
     let mut cmd_queue: gfx::Encoder<_, _> = factory.create_command_buffer().into();
-
     let constants = factory.create_constant_buffer(1);
-
     let mut buf = String::with_capacity(5);
 
-    'update: loop {
+    loop {
         let mut quit = false;
         event_loop.poll_events(|event| match event {
             Event::WindowEvent {
@@ -127,6 +123,7 @@ fn main() {
                             glutin::KeyboardInput {
                                 state: Pressed,
                                 virtual_keycode: Some(key),
+                                modifiers: glutin::ModifiersState { ctrl, .. },
                                 ..
                             },
                         ..
@@ -150,41 +147,52 @@ fn main() {
                             }
                             dom.update(&cube);
                         }
-                        buf.clear();
-                        mesh.vertices.clear();
-                        mesh.indices.clear();
-                        svg::tessellate(
+                        update_state(
+                            &mut buf,
+                            &mut mesh,
                             &dom,
                             &mut fill_tess,
                             &mut stroke_tess,
-                            &mut mesh,
-                            &mut transform,
-                        );
-                    }
-                    VirtualKeyCode::Back => {
-                        buf.clear();
-                        cube = Cube::new();
-                        dom.update(&cube);
-                        mesh.vertices.clear();
-                        mesh.indices.clear();
-                        svg::tessellate(
-                            &dom,
-                            &mut fill_tess,
-                            &mut stroke_tess,
-                            &mut mesh,
                             &mut transform,
                         );
                     }
                     VirtualKeyCode::U => buf.push('U'),
                     VirtualKeyCode::D => buf.push('D'),
-                    VirtualKeyCode::R => buf.push('R'),
+                    VirtualKeyCode::R => if ctrl {
+                        cube = Cube::new();
+                        dom.update(&cube);
+                        update_state(
+                            &mut buf,
+                            &mut mesh,
+                            &dom,
+                            &mut fill_tess,
+                            &mut stroke_tess,
+                            &mut transform,
+                        );
+                    } else {
+                        buf.push('R')
+                    },
                     VirtualKeyCode::L => buf.push('L'),
                     VirtualKeyCode::F => buf.push('F'),
                     VirtualKeyCode::B => buf.push('B'),
                     VirtualKeyCode::M => buf.push('M'),
                     VirtualKeyCode::E => buf.push('E'),
-                    VirtualKeyCode::S => buf.push('S'),
-                    VirtualKeyCode::I => buf.push('\''),
+                    VirtualKeyCode::S => if ctrl {
+                        cube.scramble();
+                        dom.update(&cube);
+                        update_state(
+                            &mut buf,
+                            &mut mesh,
+                            &dom,
+                            &mut fill_tess,
+                            &mut stroke_tess,
+                            &mut transform,
+                        );
+                    } else {
+                        buf.push('S')
+                    },
+                    VirtualKeyCode::W => buf.push('w'),
+                    VirtualKeyCode::I | VirtualKeyCode::Apostrophe => buf.push('\''),
                     VirtualKeyCode::Key2 => buf.push('2'),
                     _key => {}
                 };
@@ -218,4 +226,18 @@ fn main() {
 
         device.cleanup();
     }
+}
+
+fn update_state(
+    buf: &mut String,
+    mesh: &mut VertexBuffers<GpuFillVertex>,
+    dom: &Dom,
+    fill_tess: &mut FillTessellator,
+    stroke_tess: &mut StrokeTessellator,
+    transform: &mut Option<Transform>,
+) {
+    buf.clear();
+    mesh.vertices.clear();
+    mesh.indices.clear();
+    svg::tessellate(dom, fill_tess, stroke_tess, mesh, transform);
 }

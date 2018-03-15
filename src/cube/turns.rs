@@ -159,6 +159,18 @@ pub enum Turn {
     S,
 }
 
+pub const TURNS: [Turn; 9] = [
+    Turn::U,
+    Turn::E,
+    Turn::D,
+    Turn::L,
+    Turn::M,
+    Turn::R,
+    Turn::F,
+    Turn::S,
+    Turn::B,
+];
+
 impl Turn {
     pub fn is_slice(&self) -> bool {
         use self::Turn::*;

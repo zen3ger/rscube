@@ -25,10 +25,6 @@ impl MoveType {
         }
     }
 
-    fn unwrap(self) -> Turn {
-        self.get()
-    }
-
     fn apply_double(&self) -> Self {
         use self::MoveType::*;
 

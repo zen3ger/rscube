@@ -74,10 +74,7 @@ impl Cubie for Edge {
                     id[0] = p.as_char();
                 }
                 Pos::R | Pos::L => {
-                    let mut i = 1;
-                    if id[0] == '-' {
-                        i = 0;
-                    }
+                    let i = if id[0] == '-' { 0 } else { 1 };
                     id[i] = p.as_char();
                 }
                 Pos::F | Pos::B => id[1] = p.as_char(),
