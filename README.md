@@ -1,6 +1,14 @@
-# RSCube
+# RsCube
 
 Simple 3x3x3 Rubik's cube simulator written in Rust.
+
+<p align="center">
+	<img
+		style='height: 60%; width: 60%;'
+		src="https://github.com/zen3ger/rscube/blob/master/assets/screenshot.png"
+		alt="RsCube screenshot"
+	>
+</p>
 
 ## Usage:
 - Zoom `[` and `]` keys
