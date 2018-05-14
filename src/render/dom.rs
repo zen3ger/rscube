@@ -1,8 +1,6 @@
 use resvg::{self, tree};
 use resvg::tree::NodeExt;
 use std::default;
-use std::cell::RefMut;
-use std::borrow::BorrowMut;
 
 use cube::Cube;
 use cube::cubie::{Cubie, Pos};
@@ -35,76 +33,72 @@ impl Dom {
     pub fn update(&mut self, cube: &Cube) {
        for mut node in self.rtree.root().descendants() {
             let id = String::from(&*node.id());
-            let nodekind = node.borrow_mut();
 
-            RefMut::map(nodekind, |nk| {
-                if let tree::NodeKind::Path(ref mut p) = *nk.borrow_mut() {
-                    match id.len() {
-                        5 => {
-                            // corners format PPP-F
-                            let mut split = id.split('-');
-                            // This two should always be there
-                            // otherwise the svg format of the cube is invalid
-                            let piece = split.next().unwrap();
-                            let face = split.next().unwrap();
-                            for corner in &mut cube.corners() {
-                                if corner.id() == piece {
-                                    let (i, _) = corner
-                                        .pos
-                                        .into_iter()
-                                        .map(|p| p.as_char())
-                                        .enumerate()
-                                        .find(|&(_, c)| Some(c) == face.chars().nth(0))
-                                        .unwrap();
-                                    let c = Dom::match_color(&self.colors, &corner.init.pos[i]);
-                                    if let Some(ref mut fill) = p.fill {
-                                        fill.paint = tree::Paint::Color(c);
-                                    }
-                                    break;
+            if let tree::NodeKind::Path(ref mut p) = **node.borrow_mut() {
+                match id.len() {
+                    5 => {
+                        // corners format PPP-F
+                        let mut split = id.split('-');
+                        // This two should always be there
+                        // otherwise the svg format of the cube is invalid
+                        let piece = split.next().unwrap();
+                        let face = split.next().unwrap();
+                        for corner in &mut cube.corners() {
+                            if corner.id() == piece {
+                                let (i, _) = corner
+                                    .pos
+                                    .into_iter()
+                                    .map(|p| p.as_char())
+                                    .enumerate()
+                                    .find(|&(_, c)| Some(c) == face.chars().nth(0))
+                                    .unwrap();
+                                let c = Dom::match_color(&self.colors, &corner.init.pos[i]);
+                                if let Some(ref mut fill) = p.fill {
+                                    fill.paint = tree::Paint::Color(c);
                                 }
+                                break;
                             }
                         }
-                        4 => {
-                            // edges format EE-F
-                            let mut split = id.split('-');
-                            let piece = split.next().unwrap();
-                            let face = split.next().unwrap();
-
-                            for edge in &mut cube.edges() {
-                                if edge.id() == piece {
-                                    let (i, _) = edge.pos
-                                        .into_iter()
-                                        .map(|p| p.as_char())
-                                        .enumerate()
-                                        .find(|&(_, c)| Some(c) == face.chars().nth(0))
-                                        .unwrap();
-                                    let c = Dom::match_color(&self.colors, &edge.init.pos[i]);
-
-                                    if let Some(ref mut fill) = p.fill {
-                                        fill.paint = tree::Paint::Color(c);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        1 => {
-                            // centers F
-                            for center in &mut cube.centers() {
-                                if center.id() == id {
-                                    let c = Dom::match_color(&self.colors, &center.init.pos);
-
-                                    if let Some(ref mut fill) = p.fill {
-                                        fill.paint = tree::Paint::Color(c);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        _n => {} //not a piece
                     }
-                };
-                nk
-            });
+                    4 => {
+                        // edges format EE-F
+                        let mut split = id.split('-');
+                        let piece = split.next().unwrap();
+                        let face = split.next().unwrap();
+
+                        for edge in &mut cube.edges() {
+                            if edge.id() == piece {
+                                let (i, _) = edge.pos
+                                    .into_iter()
+                                    .map(|p| p.as_char())
+                                    .enumerate()
+                                    .find(|&(_, c)| Some(c) == face.chars().nth(0))
+                                    .unwrap();
+                                let c = Dom::match_color(&self.colors, &edge.init.pos[i]);
+
+                                if let Some(ref mut fill) = p.fill {
+                                    fill.paint = tree::Paint::Color(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    1 => {
+                        // centers F
+                        for center in &mut cube.centers() {
+                            if center.id() == id {
+                                let c = Dom::match_color(&self.colors, &center.init.pos);
+
+                                if let Some(ref mut fill) = p.fill {
+                                    fill.paint = tree::Paint::Color(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    _n => {} //not a piece
+                }
+            }
         }
     }
     fn match_color(cs: &ColorScheme, p: &Pos) -> tree::Color {
