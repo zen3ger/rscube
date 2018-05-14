@@ -18,15 +18,15 @@ pub fn tessellate(
     transform: &mut Option<Transform>,
 ) {
     for node in dom.rtree.root().descendants() {
-        if let resvg::tree::NodeKind::Path(ref p) = *node.value() {
+        if let resvg::tree::NodeKind::Path(ref p) = **node.borrow() {
             // use the first transform component
             if *transform == None {
-                *transform = Some(node.value().transform());
+                *transform = Some(node.borrow().transform());
             }
 
             // get paint or create default one
             let (paint, opacity) = match p.fill {
-                Some(f) => (f.paint, f.opacity),
+                Some(ref f) => (f.paint.clone(), f.opacity.value()),
                 None => (resvg::tree::Paint::Color(FALLBACK_COLOR), 1.0),
             };
 
@@ -46,7 +46,7 @@ pub fn tessellate(
 
             if let Some(ref stroke) = p.stroke {
                 let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                let opacity = stroke.opacity;
+                let opacity = stroke.opacity.value();
                 let _ = stroke_tess.tessellate_path(
                     convert_path(p).path_iter(),
                     &stroke_opts.with_tolerance(0.01),
